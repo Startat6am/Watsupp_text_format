@@ -1,51 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Изменение текста</title>
+    <title>Текстовые стили</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <textarea id="inputText" placeholder="Введите текст здесь"></textarea>
-    <button onclick="modifyText()">Изменить текст</button>
-    <div id="outputText"></div>
-    <button onclick="copyTextToClipboard()">Копировать текст</button>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+        <label class="block text-3xl font-bold mb-4">Введите сообщение</label>
+        <textarea id="textInput" class="w-full p-2 border rounded mb-4" placeholder="Введите текст"></textarea>
+        <div class="flex mb-4">
+            <input type="radio" name="style" id="italicRadio" class="mr-2">
+            <label for="italicRadio" class="text-sm">Курсив</label>
+            <input type="radio" name="style" id="boldRadio" class="ml-4 mr-2">
+            <label for="boldRadio" class="text-sm">Жирный</label>
+            <input type="radio" name="style" id="strikeRadio" class="ml-4 mr-2">
+            <label for="strikeRadio" class="text-sm">Зачеркнутый</label>
+        </div>
+        <button onclick="applyStyle()" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">Применить стиль</button>
+        <div id="output" class="mt-4"></div>
+        <button onclick="copyToClipboard()" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700 mt-4">Скопировать</button>
+    </div>
 
     <script>
-        function modifyText() {
-            // Получаем текст из текстового поля
-            var inputText = document.getElementById("inputText").value;
+        function applyStyle() {
+            const textInput = document.getElementById("textInput").value;
+            const italicRadio = document.getElementById("italicRadio");
+            const boldRadio = document.getElementById("boldRadio");
+            const strikeRadio = document.getElementById("strikeRadio");
+            const output = document.getElementById("output");
+            let words = textInput.split(/\s+/);
+            let styledWords = [];
 
-            // Разделяем текст на слова
-            var words = inputText.trim().split(/\s+/);
+            words.forEach(word => {
+                let styledWord = word;
 
-            // Применяем изменения к каждому слову
-            var modifiedWords = words.map(function(word) {
-                return '_' + word + '_';
+                if (italicRadio.checked) {
+                    styledWord = '_' + styledWord + '_';
+                } else if (boldRadio.checked) {
+                    styledWord = '*' + styledWord + '*';
+                } else if (strikeRadio.checked) {
+                    styledWord = '~' + styledWord + '~';
+                }
+
+                styledWords.push(styledWord);
             });
 
-            // Объединяем слова с пробелами и выводим измененный текст
-            var outputText = modifiedWords.join(' ');
-            document.getElementById("outputText").textContent = outputText;
+            const styledText = styledWords.join(' ');
+            output.innerHTML = styledText;
         }
 
-        function copyTextToClipboard() {
-            var outputText = document.getElementById("outputText");
-            var textToCopy = outputText.textContent;
+        function copyToClipboard() {
+            const output = document.getElementById("output");
+            const textToCopy = output.innerText;
 
-            // Создаем временный элемент для копирования текста в буфер обмена
-            var tempInput = document.createElement("textarea");
-            tempInput.style.position = "absolute";
-            tempInput.style.left = "-1000px";
-            tempInput.value = textToCopy;
-            document.body.appendChild(tempInput);
-
-            // Выделяем текст во временном элементе и копируем его
-            tempInput.select();
+            const textArea = document.createElement("textarea");
+            textArea.value = textToCopy;
+            document.body.appendChild(textArea);
+            textArea.select();
             document.execCommand("copy");
+            document.body.removeChild(textArea);
 
-            // Удаляем временный элемент
-            document.body.removeChild(tempInput);
-
-            alert("Текст скопирован в буфер обмена: " + textToCopy);
+            alert("Текст скопирован в буфер обмена!");
         }
     </script>
 </body>
