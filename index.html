@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Изменение текста</title>
+</head>
+<body>
+    <textarea id="inputText" placeholder="Введите текст здесь"></textarea>
+    <button onclick="modifyText()">Изменить текст</button>
+    <div id="outputText"></div>
+    <button onclick="copyTextToClipboard()">Копировать текст</button>
+
+    <script>
+        function modifyText() {
+            // Получаем текст из текстового поля
+            var inputText = document.getElementById("inputText").value;
+
+            // Разделяем текст на слова
+            var words = inputText.trim().split(/\s+/);
+
+            // Применяем изменения к каждому слову
+            var modifiedWords = words.map(function(word) {
+                return '_' + word + '_';
+            });
+
+            // Объединяем слова с пробелами и выводим измененный текст
+            var outputText = modifiedWords.join(' ');
+            document.getElementById("outputText").textContent = outputText;
+        }
+
+        function copyTextToClipboard() {
+            var outputText = document.getElementById("outputText");
+            var textToCopy = outputText.textContent;
+
+            // Создаем временный элемент для копирования текста в буфер обмена
+            var tempInput = document.createElement("textarea");
+            tempInput.style.position = "absolute";
+            tempInput.style.left = "-1000px";
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+
+            // Выделяем текст во временном элементе и копируем его
+            tempInput.select();
+            document.execCommand("copy");
+
+            // Удаляем временный элемент
+            document.body.removeChild(tempInput);
+
+            alert("Текст скопирован в буфер обмена: " + textToCopy);
+        }
+    </script>
+</body>
+</html>
